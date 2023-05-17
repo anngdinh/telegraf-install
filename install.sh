@@ -81,7 +81,9 @@ if [ $OS = "RedHat" ]; then
     if command -v curl 2>/dev/null; then
         curl -L $URI -o /tmp/$PACKAGE_NAME
     else
-        wget -O- $URI -o /tmp/$PACKAGE_NAME
+        rm -rf $PACKAGE_NAME
+        wget $URI
+        cp --remove-destination $PACKAGE_NAME /tmp/$PACKAGE_NAME
     fi
 
     $sudo_cmd rpm -i /tmp/$PACKAGE_NAME
@@ -96,7 +98,9 @@ elif [ $OS = "Debian" ]; then
     if command -v curl 2>/dev/null; then
         curl -L $URI -o /tmp/$PACKAGE_NAME
     else
-        wget -O- $URI -o /tmp/$PACKAGE_NAME
+        rm -rf $PACKAGE_NAME
+        wget $URI
+        cp --remove-destination $PACKAGE_NAME /tmp/$PACKAGE_NAME
     fi
     # curl -L "$BASE_URL/${VERSION}/${PACKAGE_NAME}" -o /tmp/$PACKAGE_NAME
     $sudo_cmd dpkg -i /tmp/$PACKAGE_NAME
