@@ -9,13 +9,18 @@ if [ ! $VERSION ]; then
   VERSION=$DEFAULT_VERSION
 fi
 
-if [ ! $VMONITOR_CLIENT_ID ]; then
-  printf "\033[31mVMONITOR_CLIENT_ID not available in VMONITOR_CLIENT_ID environment variable.\033[0m\n"
+if [ ! $IAM_CLIENT_ID ]; then
+  printf "\033[31mIAM_CLIENT_ID not available in IAM_CLIENT_ID environment variable.\033[0m\n"
   exit 1;
 fi
 
-if [ ! $VMONITOR_CLIENT_SECRET ]; then
-  printf "\033[31mVMONITOR_CLIENT_SECRET not available in VMONITOR_CLIENT_SECRET environment variable.\033[0m\n"
+if [ ! $IAM_CLIENT_SECRET ]; then
+  printf "\033[31mIAM_CLIENT_SECRET not available in IAM_CLIENT_SECRET environment variable.\033[0m\n"
+  exit 1;
+fi
+
+if [ ! $IAM_URL ]; then
+  printf "\033[31mIAM_URL not available in IAM_URL environment variable.\033[0m\n"
   exit 1;
 fi
 
@@ -99,16 +104,18 @@ fi
 # Set the configuration
 printf "\033[34m\n* Adding your API key to the Agent configuration: /etc/default/telegraf\n\033[0m\n"
 
-VMONITOR_CLIENT_ID_TEMP="$VMONITOR_CLIENT_ID"
-VMONITOR_CLIENT_SECRET_TEMP="$VMONITOR_CLIENT_SECRET"
+IAM_CLIENT_ID_TEMP="$IAM_CLIENT_ID"
+IAM_CLIENT_SECRET_TEMP="$IAM_CLIENT_SECRET"
+IAM_URL_TEMP="$IAM_URL"
 VMONITOR_SITE_TEMP="$VMONITOR_SITE"
 
 
-VMONITOR_CLIENT_ID="VMONITOR_CLIENT_ID=$VMONITOR_CLIENT_ID"
-VMONITOR_CLIENT_SECRET="VMONITOR_CLIENT_SECRET=$VMONITOR_CLIENT_SECRET"
+IAM_CLIENT_ID="IAM_CLIENT_ID=$IAM_CLIENT_ID"
+IAM_CLIENT_SECRET="IAM_CLIENT_SECRET=$IAM_CLIENT_SECRET"
+IAM_URL="IAM_URL=$IAM_URL"
 VMONITOR_SITE="VMONITOR_SITE=$VMONITOR_SITE"
 
-list_env=( $VMONITOR_CLIENT_ID $VMONITOR_CLIENT_SECRET $VMONITOR_SITE)
+list_env=( $IAM_CLIENT_ID $IAM_CLIENT_SECRET $IAM_URL $VMONITOR_SITE)
 printf "%s\n" "${list_env[@]}" | $sudo_cmd tee /etc/default/telegraf
 
 # Backward compatible with vcmc
@@ -131,8 +138,9 @@ at:
     https://vmonitor.vngcloud.vn/infrastructure\033[0m
 Waiting for metrics..."
 
-export VMONITOR_CLIENT_ID=$VMONITOR_CLIENT_ID_TEMP
-export VMONITOR_CLIENT_SECRET=$VMONITOR_CLIENT_SECRET_TEMP
+export IAM_CLIENT_ID=$IAM_CLIENT_ID_TEMP
+export IAM_CLIENT_SECRET=$IAM_CLIENT_SECRET_TEMP
+export IAM_URL=$IAM_URL_TEMP
 export VMONITOR_SITE=$VMONITOR_SITE_TEMP
 
 telegraf --once
@@ -145,7 +153,7 @@ If you ever want to stop the Agent, run:
     sudo service telegraf stop
 And to run it again run:
     sudo service telegraf start
-VMONITOR_CLIENT_ID:
+IAM_CLIENT_ID:
     /etc/telegraf/telegraf.conf
     /etc/default/telegraf
 \033[0m"
