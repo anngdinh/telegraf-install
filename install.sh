@@ -78,7 +78,11 @@ if [ $OS = "RedHat" ]; then
     PACKAGE_NAME="telegraf-nightly.${ARCHI}.rpm"
     URI="$BASE_URL/${VERSION}/${PACKAGE_NAME}"
     echo $URI
-    curl -L $URI -o /tmp/$PACKAGE_NAME
+    if command -v curl 2>/dev/null; then
+        curl -L $URI -o /tmp/$PACKAGE_NAME
+    else
+        wget -O- $URI -o /tmp/$PACKAGE_NAME
+    fi
 
     $sudo_cmd rpm -i /tmp/$PACKAGE_NAME
 
@@ -89,7 +93,11 @@ elif [ $OS = "Debian" ]; then
     PACKAGE_NAME="telegraf_nightly_${ARCHI}.deb"
     URI="$BASE_URL/${VERSION}/${PACKAGE_NAME}"
     echo $URI
-    curl -L $URI -o /tmp/$PACKAGE_NAME
+    if command -v curl 2>/dev/null; then
+        curl -L $URI -o /tmp/$PACKAGE_NAME
+    else
+        wget -O- $URI -o /tmp/$PACKAGE_NAME
+    fi
     # curl -L "$BASE_URL/${VERSION}/${PACKAGE_NAME}" -o /tmp/$PACKAGE_NAME
     $sudo_cmd dpkg -i /tmp/$PACKAGE_NAME
     ERROR_MESSAGE=""
